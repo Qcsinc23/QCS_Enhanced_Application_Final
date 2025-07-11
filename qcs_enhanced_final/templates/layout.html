@@ -110,14 +110,14 @@
                 </li>
                 
                 <li class="sidebar-item">
-                    <a class="sidebar-link {% if request.endpoint == 'calendar.calendar' %}active{% endif %}" href="{{ url_for('calendar.calendar') }}">
+                    <a class="sidebar-link {% if request.endpoint == 'calendar.calendar' %}active{% endif %}" href="/calendar">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Calendar</span>
                     </a>
                 </li>
                 
                 <li class="sidebar-item">
-                <a class="sidebar-link {% if request.endpoint == 'calendar.invoices' %}active{% endif %}" href="{{ url_for('calendar.invoices') }}">
+                <a class="sidebar-link {% if request.endpoint == 'calendar.invoices' %}active{% endif %}" href="/invoices">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <span>Invoices</span>
                     </a>

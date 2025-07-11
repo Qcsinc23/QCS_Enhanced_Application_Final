@@ -989,6 +989,91 @@ def check_event_conflicts(db, event_id, start_date, end_date=None):
                 })
     
     return conflicts
+# API endpoint to mark event as complete and generate invoice
+@calendar_bp.route('/api/events/<int:event_id>/complete', methods=['POST'])
+@login_required
+def api_complete_event(event_id):
+    """API endpoint to mark event as complete and generate invoice"""
+    try:
+        db = get_db()
+        
+        # Get the event
+        event = db.execute(
+            'SELECT * FROM events WHERE event_id = ?',
+            (event_id,)
+        ).fetchone()
+        
+        if not event:
+            return jsonify({'success': False, 'message': 'Event not found'}), 404
+        
+        if event['status'] != 'booked':
+            return jsonify({'success': False, 'message': 'Only booked events can be marked as completed'}), 400
+        
+        # Update event status to completed
+        db.execute(
+            'UPDATE events SET status = ?, updated_at = ? WHERE event_id = ?',
+            ('completed', datetime.now().strftime('%Y-%m-%d %H:%M:%S'), event_id)
+        )
+        
+        # Check if invoice already exists
+        existing_invoice = db.execute(
+            'SELECT * FROM invoices WHERE event_id = ?',
+            (event_id,)
+        ).fetchone()
+        
+        if not existing_invoice:
+            # Generate invoice
+            invoice_data = {
+                'event_id': event_id,
+                'event_title': event['event_name'],
+                'client_name': event['client_id'],  # We'll get the actual client name below
+                'amount': event['estimated_cost'] if event['estimated_cost'] else 0.00,
+                'status': 'unpaid',
+                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            # Get client name
+            client = db.execute(
+                'SELECT name FROM clients WHERE id = ?',
+                (event['client_id'],)
+            ).fetchone()
+            
+            if client:
+                invoice_data['client_name'] = client['name']
+            
+            # Insert invoice
+            db.execute('''
+                INSERT INTO invoices (event_id, event_title, client_name, amount, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (
+                invoice_data['event_id'],
+                invoice_data['event_title'],
+                invoice_data['client_name'],
+                invoice_data['amount'],
+                invoice_data['status'],
+                invoice_data['created_at']
+            ))
+            
+            invoice_id = db.lastrowid
+            db.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': 'Event marked as completed and invoice generated successfully',
+                'invoice_id': invoice_id
+            })
+        else:
+            db.commit()
+            return jsonify({
+                'success': True,
+                'message': 'Event marked as completed (invoice already exists)',
+                'invoice_id': existing_invoice['id']
+            })
+            
+    except Exception as e:
+        print(f"Error completing event: {str(e)}")
+        return jsonify({'success': False, 'message': 'An error occurred while completing the event'}), 500
+
 
 # Event routes
 @calendar_bp.route('/events/new', methods=['GET', 'POST'])

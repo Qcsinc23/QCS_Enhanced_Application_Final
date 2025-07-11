@@ -147,9 +147,9 @@ app.teardown_appcontext(close_db)
 # Routes (These use the imported helpers)
 @app.route('/')
 def index():
-    """Home page / dashboard"""
+    """Enhanced home page / landing page"""
     if 'user_id' not in session:
-        return render_template('landing.html')
+        return render_template('enhanced_landing.html')
     else:
         return redirect(url_for('dashboard'))
 
@@ -581,8 +581,8 @@ def delete_user(user_id):
 def logout():
     """User logout"""
     session.clear()
-    flash('You have been logged out', 'info')
-    return redirect(url_for('login'))
+    flash('You have been logged out successfully', 'info')
+    return redirect(url_for('index'))
 
 # Client Management Routes
 @app.route('/clients')

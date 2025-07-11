@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCS Event Management - Professional Event Solutions</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Header with Login Form */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: var(--text-dark) !important;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        /* Enhanced Login Form in Header */
+        .login-form-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            min-width: 300px;
+        }
+
+        .login-form-header .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-form-header .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-login-header {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login-header:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-toggle-login {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle-login:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        /* Enhanced Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 120px 0 80px;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .btn-hero {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary-hero {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: var(--primary-color);
+        }
+
+        .btn-outline-hero {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-hero:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Enhanced Features Section */
+        .features {
+            padding: 80px 0;
+            background: var(--bg-light);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Login Success Message */
+        .login-success {
+            background: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .login-error {
+            background: var(--danger-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-content {
+            border-bottom: 1px solid #374151;
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .btn-hero {
+                display: block;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+            
+            .feature-card {
+                margin-bottom: 2rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .login-form-header {
+                min-width: 250px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .animate-delay-1 {
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.4s;
+            animation-fill-mode: both;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.6s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation with Login Form -->
+    <nav class="navbar navbar-expand-lg" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand" href="#home">
+                <i class="fas fa-calendar-check me-2"></i>QCS Event Management
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <!-- Login Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-toggle-login dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end login-form-header" aria-labelledby="loginDropdown">
+                            <form method="POST" action="{{ url_for('login') }}" id="headerLoginForm">
+                                <h6 class="mb-3 text-center">Welcome Back</h6>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <button type="submit" class="btn-login-header">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Don't have an account? <a href="{{ url_for('register') }}" class="text-primary">Sign up</a>
+                                    </small>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Enhanced Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content animate-fade-in-up">
+                        <h1>Professional Event Management Solutions</h1>
+                        <p>Streamline your event planning, inventory management, and client coordination with our comprehensive platform designed for quality control specialists.</p>
+                        <div class="hero-buttons">
+                            <a href="{{ url_for('register') }}" class="btn btn-primary-hero btn-hero">Get Started Free</a>
+                            <a href="#features" class="btn btn-outline-hero btn-hero">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-stats animate-fade-in-up animate-delay-1">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">500+</span>
+                            <span class="hero-stat-label">Events Managed</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">50+</span>
+                            <span class="hero-stat-label">Happy Clients</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">99.9%</span>
+                            <span class="hero-stat-label">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="display-5 fw-bold mb-3 animate-fade-in-up">Powerful Features for Event Professionals</h2>
+                    <p class="lead text-muted animate-fade-in-up animate-delay-1">Everything you need to manage events efficiently and professionally</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Smart Event Scheduling</h3>
+                        <p>Comprehensive calendar management with drag-and-drop scheduling, recurring events, conflict detection, and automated reminders.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up animate-delay-1">
+                        <div class="feature-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <h3>Intelligent Inventory Control</h3>
+                        <p>Track equipment, supplies, and resources with real-time availability, predictive low-stock alerts, and automated assignments.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up animate-delay-2">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Advanced Client Management</h3>
+                        <p>Centralized client database with contact information, event history, preferences, and personalized service tracking.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3>Automated Invoice Generation</h3>
+                        <p>Smart billing and invoice creation with customizable templates, automated calculations, and integrated payment tracking.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up animate-delay-1">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Analytics & Insights</h3>
+                        <p>Comprehensive analytics with event performance metrics, resource utilization reports, and predictive business insights.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card feature-card animate-fade-in-up animate-delay-2">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile-First Design</h3>
+                        <p>Responsive design ensures full functionality across all devices with native mobile app performance and offline capabilities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold mb-4">Built for Event Professionals</h2>
+                    <p class="lead mb-4">QCS Event Management is designed specifically for quality control specialists and event professionals who demand precision, reliability, and efficiency in their operations.</p>
+                    <p>Our platform combines years of industry experience with cutting-edge technology to deliver a comprehensive solution that scales with your business.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <i class="fas fa-award" style="font-size: 8rem; color: var(--primary-color); opacity: 0.1;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Ready to Get Started?</h2>
+                    <p class="lead mb-4">Join hundreds of event professionals who trust QCS Event Management to power their business operations.</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Start Your Free Trial</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <h5><i class="fas fa-calendar-check me-2"></i>QCS Event Management</h5>
+                        <p>Professional event management solutions for quality control specialists and event professionals.</p>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h5>Platform</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="{{ url_for('register') }}">Sign Up</a></li>
+                            <li><a href="{{ url_for('login') }}">Login</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Help Center</a></li>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <h5>Contact Information</h5>
+                        <p><i class="fas fa-envelope me-2"></i>support@qcs-events.com</p>
+                        <p><i class="fas fa-phone me-2"></i>+1 (555) 123-4567</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 QCS Event Management. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar scroll effect
+            const navbar = document.getElementById('mainNavbar');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const dropdown = document.querySelector('.dropdown');
+                if (!dropdown.contains(event.target)) {
+                    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                    if (dropdownMenu.classList.contains('show')) {
+                        const bsDropdown = bootstrap.Dropdown.getInstance(dropdown.querySelector('.dropdown-toggle'));
+                        if (bsDropdown) {
+                            bsDropdown.hide();
+                        }
+                    }
+                }
+            });
+
+            // Handle login form submission
+            const loginForm = document.getElementById('headerLoginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    const submitButton = loginForm.querySelector('button[type="submit"]');
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
+                    submitButton.disabled = true;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

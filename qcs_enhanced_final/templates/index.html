@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a href="{{ url_for('calendar.calendar') }}" class="card-link">View All Events</a>
+                <a href="/calendar" class="card-link">View All Events</a>
             </div>
         </div>
     </div>
@@ -151,7 +151,7 @@
                 </div>
                 
                 <div class="quick-actions">
-                    <a href="{{ url_for('calendar.new_event') }}" class="quick-action-item">
+                    <a href="/events/new" class="quick-action-item">
                         <div class="quick-action-icon bg-primary-light text-primary">
                             <i class="fas fa-calendar-plus"></i>
                         </div>
@@ -237,13 +237,20 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
-                                    <div class="btn-group">
-                                        <a href="{{ url_for('calendar.view_event', event_id=event.event_id) }}" class="btn btn-sm btn-icon" data-bs-toggle="tooltip" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url_for('calendar.edit_event', event_id=event.event_id) }}" class="btn btn-sm btn-icon" data-bs-toggle="tooltip" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('calendar.view_event', event_id=event.event_id) }}" class="btn btn-sm btn-icon" data-bs-toggle="tooltip" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('calendar.edit_event', event_id=event.event_id) }}" class="btn btn-sm btn-icon" data-bs-toggle="tooltip" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                        {% if event.status == 'booked' %}
+                                        <button type="button" class="btn btn-sm btn-success mark-complete-btn" data-event-id="{{ event.event_id }}" title="Mark Complete & Generate Invoice">
+                                            <i class="fas fa-check-circle me-1"></i>Complete
+                                        </button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -418,6 +425,19 @@
             }
         });
         
+        // Add event listeners for "Mark Complete" buttons FIRST (before tooltips)
+        document.querySelectorAll('.mark-complete-btn').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                const eventId = this.getAttribute('data-event-id');
+                markEventComplete(eventId);
+                return false;
+            });
+        });
+        
         // Initialize tooltips
         const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         const tooltipList = Array.from(tooltipTriggerList).map(function(tooltipTriggerEl) {
@@ -481,5 +501,72 @@
             });
         }
     });
+    
+    // Mark event as complete with auto invoice generation
+    function markEventComplete(eventId) {
+        if (confirm('Mark this event as completed and generate an invoice?')) {
+            // Disable the button to prevent multiple clicks
+            const button = document.querySelector(`[data-event-id="${eventId}"]`);
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+            
+            fetch(`/api/events/${eventId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showAlert('Event marked as completed and invoice generated!', 'success');
+                    // Reload the page to update the status
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Error completing event', 'error');
+                    // Re-enable button on error
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while completing the event', 'error');
+                // Re-enable button on error
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-check-circle"></i>';
+                }
+            });
+        }
+    }
+    
+    // Show alert messages
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
+            }
+        }, 5000);
+    }
 </script>
 {% endblock %}
