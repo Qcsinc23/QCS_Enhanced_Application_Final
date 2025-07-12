@@ -1011,7 +1011,7 @@ def api_complete_event(event_id):
         
         # Update event status to completed
         db.execute(
-            'UPDATE events SET status = ?, updated_at = ? WHERE event_id = ?',
+            'UPDATE events SET status = ?, last_updated = ? WHERE event_id = ?',
             ('completed', datetime.now().strftime('%Y-%m-%d %H:%M:%S'), event_id)
         )
         
