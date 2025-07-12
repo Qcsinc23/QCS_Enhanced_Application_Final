@@ -1027,7 +1027,7 @@ def api_complete_event(event_id):
                 'event_id': event_id,
                 'event_title': event['event_name'],
                 'client_name': event['client_id'],  # We'll get the actual client name below
-                'amount': event['estimated_cost'] if event['estimated_cost'] else 0.00,
+                'amount': event.get('estimated_cost') or 0.00,
                 'status': 'unpaid',
                 'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
