@@ -92,9 +92,11 @@
                 <i class="fas fa-info-circle me-2"></i>
                 This event is currently booked. Mark as completed after the event to generate an invoice.
             </div>
-            <a href="{{ url_for('calendar.edit_event', event_id=event.event_id) }}" class="btn btn-success">
-                <i class="fas fa-check-circle me-1"></i>Mark as Completed
-            </a>
+            <form action="{{ url_for('calendar.complete_event', event_id=event.event_id) }}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check-circle me-1"></i>Mark as Completed
+                </button>
+            </form>
             {% endif %}
             </div>
         </div>
