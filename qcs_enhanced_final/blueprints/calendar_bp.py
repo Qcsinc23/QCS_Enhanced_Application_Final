@@ -1043,15 +1043,14 @@ def api_complete_event(event_id):
             
             # Insert invoice
             db.execute('''
-                INSERT INTO invoices (event_id, event_title, client_name, amount, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO invoices (event_id, client_id, amount, issue_date, status)
+                VALUES (?, ?, ?, ?, ?)
             ''', (
                 invoice_data['event_id'],
-                invoice_data['event_title'],
-                invoice_data['client_name'],
+                invoice_data['client_id'],
                 invoice_data['amount'],
-                invoice_data['status'],
-                invoice_data['created_at']
+                invoice_data['created_at'],
+                invoice_data['status']
             ))
             
             invoice_id = db.lastrowid
